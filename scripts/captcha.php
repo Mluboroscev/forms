@@ -10,7 +10,7 @@ for ($i = 0; $i < 5; $i++) {
 $_SESSION['captcha'] = $string;
 
 $image = imagecreatetruecolor(165, 50);
-$font = "../fonts/PlAGuEdEaTH.ttf";
+$font = "../fonts/font.ttf";
 $color = imagecolorallocate($image, 113, 193, 217);
 $white = imagecolorallocate($image, 255, 255, 255);
 imagefilledrectangle($image,0,0,399,99,$white);
