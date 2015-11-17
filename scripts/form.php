@@ -76,8 +76,7 @@ if ($post) {
       
       $$key = htmlspecialchars(trim($_POST[$key]));
       $required = $value;
-      $links = array();
-      
+            
       unset($status);
       
       switch ($key) {
