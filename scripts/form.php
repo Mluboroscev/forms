@@ -36,7 +36,9 @@ if ($post) {
         'to' => array(
           'name' => 'Максим',
           'email' => 'mluboroscev@me.com'
-        )
+        ),
+        'cc' => '',
+        'bcc' => ''
       ),
       'note' => 'Ваш отзыв успешно отправлен'
     ),
@@ -62,7 +64,9 @@ if ($post) {
         'to' => array(
           'name' => 'Максим',
           'email' => 'mluboroscev@me.com'
-        )
+        ),
+        'cc' => '',
+        'bcc' => ''
       ),
       'note' => 'Ваша регистрация прошла успешно'
     )
@@ -88,7 +92,7 @@ if ($post) {
         
         case 'email':
           $status = validate_email($email, $required);
-          $js_status = js_status ($key, $status, $js_status, $form['id']);          
+          $js_status = js_status ($key, $status, $js_status, $form['id']);
         break;
         
         case 'phone':
@@ -103,17 +107,19 @@ if ($post) {
           $status_1 = validate_password($password, $required);
           $status_2 = validate_password($password_repeat, $required);
           
-          if ($status_1 == true && $status_2 == true && $password == $password_repeat) {
+          if ( $status_1 == true &&
+               $status_2 == true &&
+               $password == $password_repeat ) {
             
             $status = true;
-                        
+            
           }
           
           $js_status = js_status ('password', $status, $js_status, $form['id']);
           $js_status = js_status ($key, $status, $js_status, $form['id']);
           
         break;
-        
+                
         case 'terms':
         
           $status = validate_terms($terms, $required);
@@ -156,27 +162,43 @@ if ($post) {
   
   if (!$js_status['errors']) {
     
+    ## Здесь можно описать блок MySQL
+    ## $query = "";
+    ## $result = mysql_query($query);
+    
     ## Если по форме надо отправить письмо
     if ($forms[$form['name']]['mail']['active']) {
       
       foreach ($forms[$form['name']]['fields'] as $key => $value) {
+        
         $forms[$form['name']]['mail']['body'] = preg_replace("/<" . $key . ">/", $$key, $forms[$form['name']]['mail']['body']);
+        
       }
       
       $forms[$form['name']]['mail']['body'] = preg_replace("/<date>/", date("d-m-Y H:i:s"), $forms[$form['name']]['mail']['body']);      
       
-      send_mime_mail(
-        $forms[$form['name']]['mail']['from']['name'],  # имя отправителя
-        $forms[$form['name']]['mail']['from']['email'], # email отправителя
-        $forms[$form['name']]['mail']['to']['name'],    # имя получателя
-        $forms[$form['name']]['mail']['to']['email'],   # email получателя
-        'UTF-8',                                        # кодировка переданных данных
-        'KOI8-R',                                       # кодировка письма
-        $forms[$form['name']]['mail']['subject'],       # тема письма
-        $forms[$form['name']]['mail']['body'],          # текст письма
-        false                                           # письмо в виде html или обычного текста
-      );
+      ## Блок будет полезен для тестирования в бою,
+      ## если письма Вы получаете не один
+      #
+      # if (preg_match("/@devops.myhc.ru$/", $email)) {
+      #   
+      #   $forms[$form['name']]['mail']['to']['name'] = 'Максим';
+      #   $forms[$form['name']]['mail']['to']['email'] = 'mluboroscev@me.com';
+      #   
+      # }
       
+      send_mime_mail(
+        $forms[$form['name']]['mail']['from'],    # отправитель
+        $forms[$form['name']]['mail']['to'],      # получатель
+        $forms[$form['name']]['mail']['cc'],      # копия письма
+        $forms[$form['name']]['mail']['bcc'],     # скрытая копия письма
+        'UTF-8',                                  # кодировка переданных данных
+        'KOI8-R',                                 # кодировка письма
+        $forms[$form['name']]['mail']['subject'], # тема письма
+        $forms[$form['name']]['mail']['body'],    # текст письма
+        false                                     # письмо в виде html или обычного текста
+      );
+            
     }
     
     $json['note'] = $forms[$form['name']]['note'];
