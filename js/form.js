@@ -24,14 +24,14 @@ $(document).ready(function() {
       url: "scripts/form.php",
       data: str + '&form=' + $(this).attr('id'),
       success: function(msg) {
-        // result = msg['result'];
-        //console.log(msg['errors']);
         if (msg['result'] == 'OK') {
           $form.find('div[id$=_d]').removeClass();
           $form.find('div[id$=_d]').addClass('form-group');
           $form.find("input[type=text], textarea").removeAttr('style');
+          $form.find("input[type=password]").removeAttr('style');
           $form.hide();
           $form.find("input[type=text], textarea").val('');
+          $form.find("input[type=password]").val('');
           $('#' + form_id +'_note').html(msg['note']);
           $('#' + form_id +'_note').show();
           $('#' + form_id +'_note').css({ opacity: 1 });
